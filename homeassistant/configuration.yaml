@@ -1,0 +1,21 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# REST Command to notify n8n when door opens
+# Update YOUR_N8N_IP with your n8n server IP
+rest_command:
+  notify_n8n_ouverture:
+    url: "http://YOUR_N8N_IP:5678/webhook/door-event"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: >-
+      {"evenement": "ouverture", "appareil": "YOUR_DEVICE_NAME", "heure": "{{ now().isoformat() }}"}
+    content_type: "application/json"
