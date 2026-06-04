@@ -3,7 +3,7 @@
 Automated IoT event collection, real-time alerting and business decision support.
 Built with n8n, Docker, MySQL, Home Assistant and Tuya.
 
-![Architecture](architecture.png)
+![Architecture](pic01.png)
 
 ---
 
