@@ -1,0 +1,58 @@
+{
+  "name": "Workflow 5 - Door Detector",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "door-event",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "door_events",
+        "columns": "device,event_type,event_time",
+        "additionalFields": {}
+      },
+      "name": "Insert rows in a table",
+      "type": "n8n-nodes-base.mySql",
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM door_events ORDER BY id DESC LIMIT 1"
+      },
+      "name": "Execute a SQL query",
+      "type": "n8n-nodes-base.mySql",
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "YOUR_EMAIL@gmail.com",
+        "toEmail": "YOUR_EMAIL@gmail.com",
+        "subject": "=Door Alert - {{$json[\"device\"]}} - {{$json[\"event_type\"]}}",
+        "text": "=Door Event Detected\n\nDevice     : {{$json[\"device\"]}}\nEvent      : {{$json[\"event_type\"]}}\nTime       : {{$json[\"event_time\"]}}\nRecorded at: {{$json[\"created_at\"]}}"
+      },
+      "name": "Send an Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Insert rows in a table", "type": "main", "index": 0}]]
+    },
+    "Insert rows in a table": {
+      "main": [[{"node": "Execute a SQL query", "type": "main", "index": 0}]]
+    },
+    "Execute a SQL query": {
+      "main": [[{"node": "Send an Email", "type": "main", "index": 0}]]
+    }
+  }
+}
